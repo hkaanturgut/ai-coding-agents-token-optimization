@@ -355,16 +355,16 @@ They're complementary, not competing — different halves of the same problem.
 
 | | 🧢 **ponytail** | 🪨 **caveman** |
 |---|---|---|
-| **Shrinks** | What the agent **builds** (lines of code) | What the agent **says** (reply text) |
-| **Token lever** | Output *and* downstream input (less code to re-read) | Output tokens only |
-| **Core idea** | Laziest senior dev — YAGNI ladder, minimum that works | "Why use many token when few do trick" — drop filler |
-| **Touches your code?** | Yes — writes less; never cuts safety/validation/a11y | No — code/commands/errors stay byte-for-byte exact |
-| **Typical win** | ~54% less code (up to 94% on over-build traps) | ~65% fewer output tokens (22–87%) |
-| **Best on** | Build/refactor/design tasks, dependency choices | Explanations, reviews, chatty multi-turn sessions |
-| **Ships here as** | `.github/instructions/ponytail.instructions.md` | `.github/instructions/caveman.instructions.md` |
-| **Native install** | Claude Code/Codex/Copilot-CLI plugin (`/plugin install ponytail@ponytail`) | One-line installer (`install.sh`), 30+ agents |
-| **Slash commands** | Only on plugin hosts: `/ponytail-review`, `-audit`, `-debt`, `-gain`, `-help` | Only on hook hosts: `/caveman-stats`, `-commit`, `-review` |
-| **Levels** | `lite` · `full` (default) · `ultra` · `off` | `lite` · `full` (default) · `ultra` · `wenyan` |
+| **Shrinks** | Code it **builds** | Text it **says** |
+| **Token lever** | Output + downstream input | Output only |
+| **Core idea** | YAGNI ladder, minimum that works | Drop filler, keep substance |
+| **Your code?** | Writes less; never cuts safety | Untouched, byte-for-byte |
+| **Typical win** | ~54% less code (up to 94%) | ~65% fewer output tokens |
+| **Best on** | Build / refactor / design | Explanations, reviews, chat |
+| **Ships as** | `ponytail.instructions.md` | `caveman.instructions.md` |
+| **Native install** | Plugin (`/plugin install`) | One-liner `install.sh` |
+| **Slash cmds** | Plugin hosts only | Hook hosts only |
+| **Levels** | lite · full · ultra · off | lite · full · ultra · wenyan |
 
 > **Copilot CLI note:** installed via `/plugin install`, both land as **skills**,
 > not slash commands — they're **model-invoked** (fire by intent, or say
