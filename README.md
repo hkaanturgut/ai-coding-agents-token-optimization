@@ -519,6 +519,7 @@ One-page cheat sheet including:
 3. **Resources**
    - ponytail: https://github.com/DietrichGebert/ponytail
    - caveman: https://github.com/juliusbrussee/caveman
+   - spec-kit: https://github.com/github/spec-kit
    - This repo: https://github.com/hkaanturgut/ai-coding-agents-token-optimization
 4. **Next Steps**
    - Audit your setup this week
@@ -602,6 +603,7 @@ Follow the timeline in the "Step-by-Step Demo Walkthrough" section above.
 | `demo/scenarios/code-review.md` | Live demo scenario | Segment 4 (Isolate) |
 | `demo/scenarios/refactoring.md` | Live demo scenario | Segment 4 (Isolate) |
 | `docs/FRAMEWORK.md` | Theory & deep dive | Attendee reference |
+| `spec-kit` | Spec-first workflow scaffolding | Reduce prompt thrash/rework |
 | `docs/COPILOT-SETUP.md` | GitHub Copilot guide | Production setup |
 | `docs/CLAUDE-CODE-SETUP.md` | Claude Code guide | Production setup |
 | `docs/ATTENDEE-HANDOUT.md` | One-pager takeaways | Post-demo resource |
@@ -631,6 +633,7 @@ A: Yes. Framework is tool-agnostic. Adapt MCP configs to your platform.
 
 - **ponytail** (Token analysis): https://github.com/DietrichGebert/ponytail
 - **caveman** (Compression): https://github.com/juliusbrussee/caveman
+- **spec-kit** (Spec-first workflows): https://github.com/github/spec-kit
 - **OpenAI Token Counter** (tiktoken): https://github.com/openai/tiktoken
 - **Anthropic Token Counting** (claude API): https://docs.anthropic.com/claude/reference/token-counting
 - **MCP Spec**: https://modelcontextprotocol.io/

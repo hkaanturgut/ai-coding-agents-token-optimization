@@ -334,6 +334,7 @@ AFTER:
 4. **One agent doing everything** → Split into 2-3 focused agents
 5. **Verbose system prompts** → Compress by 50%+ possible
 6. **Not measuring baseline** → Hard to know if optimizations work
+7. **Freeform requirements churn** → Use spec-kit to lock scope before long agent loops
 
 ---
 
@@ -342,4 +343,5 @@ AFTER:
 - **Token Counting:** https://github.com/openai/tiktoken
 - **caveman** (compression): https://github.com/juliusbrussee/caveman
 - **ponytail** (token tracking): https://github.com/DietrichGebert/ponytail
+- **spec-kit** (spec-first workflows): https://github.com/github/spec-kit
 - **MCP Spec:** https://modelcontextprotocol.io/

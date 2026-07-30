@@ -4,6 +4,7 @@
 
 ```
 WRITE:    Baseline your token overhead (50K+ before first prompt)
+WRITE+:   Use spec-kit templates to reduce prompt rework and ambiguity
 SELECT:   Load only task-relevant tools (85% reduction)
 COMPRESS: Use code, not data dumps (97.5% reduction)
 ISOLATE:  Split agents by task (70% reduction per workflow)
@@ -35,6 +36,7 @@ node tools/agent-budget-calculator.js --scenario code-review --budget 100K
 | Metric | Impact | Action |
 |--------|--------|--------|
 | Tool overhead | 50K+ tokens | Audit & remove unused |
+| Spec thrash | 20-40% hidden overhead | Use spec-kit for scoped specs |
 | Selective loading | 85% ↓ | Use task-based configs |
 | Compression mode | 75% ↓ | Enable caveman for multi-turn |
 | Multi-agent split | 70% ↓ | Specialize agents by task |
@@ -125,6 +127,7 @@ node tools/agent-budget-calculator.js --scenario code-review --budget 100K
 
 - **ponytail** (Token tracking): https://github.com/DietrichGebert/ponytail
 - **caveman** (Compression): https://github.com/juliusbrussee/caveman
+- **spec-kit** (Spec-first delivery): https://github.com/github/spec-kit
 - **MCP Spec**: https://modelcontextprotocol.io/
 - **This repo**: https://github.com/hkaanturgut/ai-coding-agents-token-optimization
 

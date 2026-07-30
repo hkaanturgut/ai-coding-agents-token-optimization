@@ -329,3 +329,4 @@ node tools/agent-budget-calculator.js --scenario code-review
 - MCP Specification: https://modelcontextprotocol.io/
 - OpenAI Token Counter: https://github.com/openai/tiktoken
 - Anthropic Documentation: https://docs.anthropic.com
+- spec-kit (structured spec workflow): https://github.com/github/spec-kit
