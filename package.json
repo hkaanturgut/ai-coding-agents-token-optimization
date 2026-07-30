@@ -1,0 +1,28 @@
+{
+  "name": "Stop Burning Tokens: AI Agent Cost Optimization",
+  "version": "1.0.0",
+  "description": "Framework and tools for optimizing token usage in AI coding agents",
+  "main": "tools/token-inspector.js",
+  "scripts": {
+    "setup": "bash scripts/setup-demo.sh",
+    "baseline": "bash scripts/run-baseline.sh",
+    "demo": "bash scripts/run-demo.sh",
+    "inspect": "node tools/token-inspector.js",
+    "compress": "node tools/caveman-formatter.js",
+    "budget": "node tools/agent-budget-calculator.js"
+  },
+  "keywords": [
+    "tokens",
+    "optimization",
+    "ai-agents",
+    "copilot",
+    "claude",
+    "cost-reduction",
+    "mcp"
+  ],
+  "author": "DevOps Toronto Community",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
