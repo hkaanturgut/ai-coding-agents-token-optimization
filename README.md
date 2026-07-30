@@ -125,6 +125,10 @@ The **context window** is the maximum number of tokens a model can consider at
 once — **input + output combined**. Typical sizes today: ~128K, 200K, up to 1M+
 tokens.
 
+<p align="center">
+  <img src="docs/assets/context-window.png" alt="The context window: system prompt, tools, conversation history, and files all share one fixed token budget shared between input and output" width="640" />
+</p>
+
 Two things people miss:
 1. **Every turn re-sends the whole conversation.** The model is stateless, so on
    turn 20 you pay input tokens for turns 1–19 *again*. A long chat silently
