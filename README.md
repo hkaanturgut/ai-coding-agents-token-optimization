@@ -2,79 +2,80 @@
 
 ## DevOps Toronto Demo Session
 
-A complete, copy-paste demo you can run **entirely in GitHub Copilot** (VS Code).
-No Claude Code required. Two parts:
+A single, copy-paste demo you can run **entirely in GitHub Copilot** (VS Code).
+It tells one story in three acts, each attacking a different source of wasted
+tokens:
 
-1. **Part 1 — Native optimization.** The slash commands and config files already
-   in Copilot that cut token waste before you install anything.
-2. **Part 2 — Two tools.** Add **ponytail** (shrinks the *code* Copilot writes)
-   and **caveman** (shrinks the *text* Copilot writes) as instruction files.
+1. **Native first** — the slash commands and config files already in Copilot.
+2. **Spec Kit** — build the *right* thing once instead of re-prompting your way
+   there (the biggest hidden token cost is rework).
+3. **Two tools** — **ponytail** shrinks the *code* Copilot writes, **caveman**
+   shrinks the *text* Copilot writes.
 
 **Event:** [DevOps Toronto Meetup - July 30, 2026](https://www.meetup.com/devopsto/events/315582119/)
 **Duration:** ~30 minutes · **Agent:** GitHub Copilot in VS Code
 
 ---
 
-## The one idea
+## The story in one picture
 
-Three levers, each an independent source of token spend:
+Four ways tokens leak, and what plugs each:
 
-| Lever | What it is | Fixed by |
-|-------|-----------|----------|
-| **Context** | What Copilot re-reads every turn | Part 1: `/clear`, `/compact`, instructions |
-| **Output** | What Copilot writes back to you | Part 2: **caveman** |
-| **Code** | What Copilot builds into your repo | Part 2: **ponytail** |
+| Leak | What it is | Act |
+|------|-----------|-----|
+| **Context** | Stale conversation re-sent every turn | Act 1 — `/clear`, `/compact` |
+| **Rework** | Building the wrong thing, then redoing it | Act 2 — Spec Kit |
+| **Code** | Copilot over-building what you asked for | Act 3 — ponytail |
+| **Output** | Verbose replies on every turn | Act 3 — caveman |
 
-Part 1 is free and instant. Part 2 makes the other two levers automatic.
-
-> **Copilot note on the tools:** ponytail and caveman are *instruction files*
-> here — no plugin marketplace, no CLI. This repo already ships them in
-> [.github/instructions/](.github/instructions/), so Copilot picks them up
-> automatically when you open this folder. That's the whole install.
+Native gets you far for free. Spec Kit kills the expensive rework loop. The two
+tools make the last two leaks automatic.
 
 ---
 
 ## Prerequisites
 
-- VS Code with the **GitHub Copilot** + **Copilot Chat** extensions, signed in.
+- VS Code with **GitHub Copilot** + **Copilot Chat** extensions, signed in.
 - This repo open as your workspace folder.
-- Enable instruction files (usually on by default): Settings → search
-  **"copilot instruction files"** → ensure *Use Instruction Files* is checked,
-  or add to `.vscode/settings.json`:
+- Instruction files enabled (usually on by default) — Settings → search
+  **"copilot instruction files"** → *Use Instruction Files*, or in
+  `.vscode/settings.json`:
   ```json
   { "github.copilot.chat.codeGeneration.useInstructionFiles": true }
   ```
+- For Act 2: [uv](https://docs.astral.sh/uv/), Python 3.11+, and Git.
 - Open Copilot Chat in **Agent** mode for the code demos.
 
 ---
 
-# Part 1 — Native optimization (no installs)
+# Act 1 — Native optimization (no installs)
 
-### Step 1.1 — See the bill
+The biggest waste is context you forgot you were carrying. Fix it with what
+Copilot already ships.
 
-Every turn re-sends the whole conversation. Long threads pay for every past turn.
+### 1.1 — See the bill
 
-1. Open Copilot Chat. Hover the **context window indicator** (bottom of the chat
-   input) to see how full the context is.
-2. Have a few back-and-forth turns, then watch it climb.
+Every turn re-sends the whole conversation. A long thread pays for every past
+turn. In Copilot Chat, hover the **context-window indicator** below the input and
+watch it climb as the thread grows.
 
 > **Say:** "We haven't touched the model. Most of what we're paying for is old
 > conversation."
 
-### Step 1.2 — Reclaim context with two commands
+### 1.2 — Reclaim it with two commands
 
 | Goal | Command |
 |------|---------|
-| New, unrelated task — drop all history | `/clear` (starts a fresh chat) |
-| Same task, thread got long — keep a summary | `/compact` (or **Summarize conversation**) |
+| New, unrelated task — drop all history | `/clear` (fresh chat) |
+| Same task, long thread — keep a summary | `/compact` (or **Summarize conversation**) |
 
-**Do it live:** in a long thread, type `/compact`. Copilot replaces the old
-transcript with a summary and keeps going. Then start the next task with `/clear`.
+**Do it live:** type `/compact` in a long thread — Copilot swaps the transcript
+for a summary and keeps going. Start the next task with `/clear`.
 
 > **Highest-leverage habit in this talk:** `/clear` between unrelated tasks.
 > Costs nothing, and nobody does it.
 
-### Step 1.3 — Point at data, don't paste it
+### 1.3 — Point at data, don't paste it
 
 The classic waste is pasting a huge log into chat.
 
@@ -82,8 +83,7 @@ The classic waste is pasting a huge log into chat.
 wc -l demo/sample-data/large-log.txt        # ~500,000 lines
 ```
 
-Pasting that is tens of thousands of tokens. Instead, filter first and paste only
-the result:
+Filter first, paste only the result:
 
 ```bash
 grep -iE "error|fatal|exception" demo/sample-data/large-log.txt \
@@ -92,115 +92,171 @@ grep -iE "error|fatal|exception" demo/sample-data/large-log.txt \
 
 You get a handful of lines pointing at a Postgres connection timeout.
 
-**Prompt to run in Copilot Chat (paste only the grep output):**
+**Prompt (paste only the grep output):**
 > Here are the top error lines from a production log:
 > ```
-> <paste the ~5 lines from the grep output>
+> <paste the ~5 lines>
 > ```
-> What's the most likely root cause, and the smallest fix?
+> Most likely root cause and the smallest fix?
 
-Same answer as pasting the whole file, ~99% fewer tokens. Your local `grep` was
-free.
+Same answer, ~99% fewer tokens. Your local `grep` was free.
 
-### Step 1.4 — Write standing rules once (custom instructions)
+### 1.4 — Write standing rules once (custom instructions)
 
 Stop retyping "use the stdlib, no comments, keep it small" every prompt.
 
-- **Repo-wide:** `.github/copilot-instructions.md`. Generate a starter by typing
-  `/generateInstructions` in Chat, or copy
+- **Repo-wide:** `.github/copilot-instructions.md`. Generate a starter with
+  `/generateInstructions`, or copy
   [demo/part1-native/copilot-instructions.example.md](demo/part1-native/copilot-instructions.example.md).
 - **Path-scoped / multiple:** `.github/instructions/*.instructions.md` with an
-  `applyTo` glob in the front matter. (This is exactly how the two tools ship —
-  see Part 2.)
+  `applyTo` glob in the front matter. (This is exactly how the two tools in Act 3
+  ship.)
 
-**Prove it:** with the example rules in place, ask a normal question. Copilot
+**Prove it:** with the example rules in place, ask a normal question — Copilot
 already follows the rules without you repeating them.
 
-### Step 1.5 — Turn repeated prompts into files (prompt files)
+### 1.5 — Turn repeated prompts into files (prompt files)
 
 For prompts you run often, save them as `.github/prompts/*.prompt.md` and run
 them by name.
 
-1. This repo ships
-   [demo/part1-native/optimize-logs.prompt.md](demo/part1-native/optimize-logs.prompt.md).
-   Copy it into `.github/prompts/`.
-2. In Chat, run it: type `/optimize-logs` (or Command Palette → **Chat: Run
-   Prompt**). It reruns Step 1.3 as a one-word command.
-3. To capture a good ad-hoc prompt into a file, use the `/savePrompt` command.
+1. Copy [demo/part1-native/optimize-logs.prompt.md](demo/part1-native/optimize-logs.prompt.md)
+   into `.github/prompts/`.
+2. In Chat, run `/optimize-logs` (or Command Palette → **Chat: Run Prompt**). It
+   reruns 1.3 as a one-word command.
+3. Capture a good ad-hoc prompt into a file with `/savePrompt`.
 
-> **Say:** "Every rule and prompt you write here is a paragraph you never retype —
-> and a wrong first draft you never pay to correct."
+> **Say:** "Every rule and prompt you write here is a paragraph you never
+> retype — and a wrong first draft you never pay to correct."
 
 ---
 
-# Part 2 — Two tools, as Copilot instruction files
+# Act 2 — GitHub Spec Kit (build the right thing once)
 
-The tools ship in this repo as
+Act 1 trims context. The bigger money leak is **rework**: you prompt, Copilot
+builds the wrong thing, you re-prompt, it rebuilds — burning tokens each lap.
+[Spec Kit](https://github.com/github/spec-kit) is GitHub's open-source toolkit
+for **Spec-Driven Development**: agree on the spec and plan *first*, so the agent
+implements it once.
+
+### 2.1 — Install the Specify CLI
+
+```bash
+# Needs uv, Python 3.11+, Git
+uv tool install specify-cli --from git+https://github.com/github/spec-kit.git
+
+# (also on PyPI)
+uv tool install specify-cli
+```
+
+### 2.2 — Initialize for Copilot
+
+```bash
+specify init token-demo --integration copilot
+cd token-demo
+```
+
+This drops Spec Kit's `/speckit.*` prompt files into the repo so Copilot Chat can
+run them.
+
+### 2.3 — Run the spec-driven workflow (all in Copilot Chat)
+
+Each command is a Copilot slash command created by `specify init`:
+
+| Step | Command | What it does |
+|------|---------|--------------|
+| 1. Principles | `/speckit.constitution` | Set project-wide rules (quality, testing, UX, performance) |
+| 2. What & why | `/speckit.specify` | Describe the feature — no tech stack yet |
+| 3. Clarify | `/speckit.clarify` | Answer the gaps *before* planning (optional, recommended) |
+| 4. How | `/speckit.plan` | Give the tech stack + architecture |
+| 5. Break down | `/speckit.tasks` | Generate an actionable task list |
+| 6. Sanity check | `/speckit.analyze` | Cross-check spec ↔ plan ↔ tasks (optional) |
+| 7. Build | `/speckit.implement` | Execute the tasks in one pass |
+
+**Example prompts to run live:**
+```
+/speckit.constitution Focus on small diffs, native platform features first,
+and validation at trust boundaries.
+
+/speckit.specify Build a page where users organize photos into date-grouped
+albums, reordered by drag-and-drop. No nested albums.
+
+/speckit.plan Vanilla HTML/CSS/JS with Vite. Metadata in local SQLite. No uploads.
+
+/speckit.tasks
+
+/speckit.implement
+```
+
+> **Say:** "The spec is the cheap artifact. Getting agreement in a 2K-token spec
+> beats discovering the misunderstanding after 60K tokens of generated code."
+
+> **Note:** Spec Kit slash commands are `/speckit.*` in current releases. Run
+> `specify integration list` to confirm your version's exact names.
+
+---
+
+# Act 3 — Two tools, as Copilot instruction files
+
+The finale: two tiny tools that ship in this repo as instruction files —
 [.github/instructions/ponytail.instructions.md](.github/instructions/ponytail.instructions.md)
 and
 [.github/instructions/caveman.instructions.md](.github/instructions/caveman.instructions.md).
-Both use `applyTo: '**'`, so Copilot loads them on every request. Opening this
-folder **is** the install.
+Both use `applyTo: '**'`, so Copilot loads them on every request. **Opening this
+folder is the install.** To use them in your own repo, copy the two files into
+its `.github/instructions/`.
 
-> Want them in your *own* repo? Copy those two files into your repo's
-> `.github/instructions/`. That's it. (Upstream CLIs exist for other agents; in
-> Copilot the instruction file is the supported path.)
-
----
-
-## Demo 2.1 — ponytail: shrink what Copilot BUILDS
+## 3.1 — ponytail: shrink what Copilot BUILDS
 
 **The over-build trap.** Open
 [demo/part2-tools/signup-form.html](demo/part2-tools/signup-form.html).
 
-**Prompt (run it twice to compare):**
+**Prompt (run twice to compare):**
 > Add a date-of-birth field to the signup form.
 
-- **Without ponytail** (temporarily rename the instructions file, or try it in a
-  scratch repo): Copilot typically pulls in a datepicker library, writes a
-  wrapper component, and adds styles.
-- **With ponytail** (default in this repo): Copilot climbs the YAGNI ladder to
-  "native platform feature" and writes:
+- **Without ponytail** (rename the instructions file, or use a scratch repo):
+  Copilot pulls in a datepicker library, a wrapper component, and styles.
+- **With ponytail** (default here): it climbs the YAGNI ladder to the native
+  platform feature and writes one line:
   ```html
   <input type="date" name="dob" required />
   ```
 
-Same requirement. One line instead of a dependency. **And** it kept `required`
-(validation is never on the chopping block).
+One line instead of a dependency — and it kept `required` (validation is never
+cut).
 
-**Prompt — review a real diff for over-engineering:**
-> Review the current changes for over-engineering. Give me a delete-list:
-> file:line → what to remove → why. Don't cut validation, security, or
-> accessibility.
+**Prompt — audit a diff:**
+> Review the current changes for over-engineering. Delete-list only:
+> file:line → remove → why. Keep validation, security, accessibility.
 
-> **The numbers (upstream benchmark):** ~54% less code on average, up to 94%
-> where an agent over-builds, ~20% cheaper, ~27% faster — 100% safe.
+> **Numbers (upstream benchmark):** ~54% less code on average, up to 94% where an
+> agent over-builds, ~20% cheaper, ~27% faster — 100% safe.
 
-## Demo 2.2 — caveman: shrink what Copilot SAYS
+## 3.2 — caveman: shrink what Copilot SAYS
 
-**Prompt (conceptual question shows it best):**
+**Prompt:**
 > Explain how database connection pooling works.
 
 - **Without caveman:** a paragraph with intro, filler, and a wrap-up.
-- **With caveman** (default in this repo): something like
+- **With caveman** (default here): terse, e.g.
   > "Pool reuses open DB connections. No new connection per request. Skips
-  > handshake overhead → faster under load. Size the pool to DB max connections."
+  > handshake overhead → faster under load. Size pool to DB max connections."
 
-Same facts, ~a third of the words. Code blocks, commands, and error strings stay
+Same facts, ~a third of the words. Code, commands, and error strings stay
 byte-for-byte exact.
 
-**Toggle for the demo:** to show the "before", say `normal mode`; to bring it
-back, say `talk like caveman`.
+**Toggle for the demo:** say `normal mode` to show the "before", `talk like
+caveman` to bring it back.
 
-> **Honest caveat (say it):** caveman shrinks *output* tokens only. In this
-> instruction-file form there's no `/caveman-stats` counter (that's a Claude Code
-> hook). The win here is readable, fast answers — cost is the bonus.
+> **Honest caveat (say it):** as an instruction file, caveman shrinks *output*
+> tokens only. `/caveman-stats` and the statusline counter are Claude Code hook
+> features — not available in Copilot. The win here is readable, fast answers.
 
-## Demo 2.3 — they stack
+## 3.3 — they stack
 
-Make one change with both on:
-- **ponytail** keeps the *diff* small (code untouched by caveman).
-- **caveman** keeps the *explanation* short (prose untouched by ponytail).
+Ask Copilot to implement one small feature *and* explain it:
+- **ponytail** keeps the code minimal.
+- **caveman** keeps the explanation short.
 
 > caveman = smaller mouth. ponytail = smaller hands. No overlap — run both.
 
@@ -209,10 +265,10 @@ Make one change with both on:
 ## Repository map
 
 ```
-README.md                                   # This runbook
+README.md                                   # This runbook (the whole story)
 .github/instructions/
-  ponytail.instructions.md                  # Tool 1 — installed for Copilot
-  caveman.instructions.md                   # Tool 2 — installed for Copilot
+  ponytail.instructions.md                  # Act 3 tool — installed for Copilot
+  caveman.instructions.md                   # Act 3 tool — installed for Copilot
 docs/
   PART-1-NATIVE.md                          # Deeper reference: native commands
   PART-2-CAVEMAN-PONYTAIL.md                # Deeper reference: the tools
@@ -221,19 +277,10 @@ docs/
 demo/
   part1-native/                             # Example instructions + prompt file
   part2-tools/signup-form.html              # ponytail over-build trap
-  sample-data/                              # Log used in Step 1.3
+  sample-data/                              # Log used in Act 1.3
 ```
 
----
-
-## Do this week (attendee takeaway)
-
-1. **Mon:** `/clear` between every unrelated Copilot task.
-2. **Tue:** Add a `.github/copilot-instructions.md` with your top 5 rules.
-3. **Wed:** Turn one repeated paste into a `.github/prompts/*.prompt.md`.
-4. **Thu:** Copy `ponytail.instructions.md` into a real repo; run the date-picker
-   prompt.
-5. **Fri:** Copy `caveman.instructions.md` in; feel the shorter answers.
-
-Sources (MIT, no telemetry): [ponytail](https://github.com/DietrichGebert/ponytail)
-· [caveman](https://github.com/JuliusBrussee/caveman).
+Sources (all MIT, no telemetry):
+[Spec Kit](https://github.com/github/spec-kit) ·
+[ponytail](https://github.com/DietrichGebert/ponytail) ·
+[caveman](https://github.com/JuliusBrussee/caveman).
