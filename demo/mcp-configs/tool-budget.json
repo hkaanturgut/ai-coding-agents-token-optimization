@@ -1,0 +1,24 @@
+{
+  "agents": [
+    {
+      "name": "analyzer",
+      "tools": ["code-analyzer", "file-reader"],
+      "contextBudget": 30000,
+      "systemPrompt": "You are a fast code analyzer. Identify issues quickly and categorize them by priority."
+    },
+    {
+      "name": "implementer",
+      "tools": ["code-generator", "test-generator"],
+      "contextBudget": 50000,
+      "systemPrompt": "You are an expert code generator. Write clean, well-tested, production-ready code."
+    },
+    {
+      "name": "reviewer",
+      "tools": ["code-analyzer", "performance-profiler"],
+      "contextBudget": 25000,
+      "systemPrompt": "You are a quality reviewer. Ensure code meets standards and catches regressions."
+    }
+  ],
+  "conversationHistory": "",
+  "context": ""
+}

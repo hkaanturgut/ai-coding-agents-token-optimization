@@ -1,0 +1,46 @@
+diff --git a/src/auth/session.js b/src/auth/session.js
+index abc1234..def5678 100644
+--- a/src/auth/session.js
++++ b/src/auth/session.js
+@@ -15,6 +15,10 @@ async function createSession(userId) {
+   const session = {
+     userId,
+     token: generateToken(),
++    permissions: await fetchUserPermissions(userId), // NEW: Load perms
++    expiresAt: Date.now() + SESSION_TTL,
++    refreshCount: 0,
++    ipAddress: requestContext.ip,
+   };
+   
+   await sessionStore.save(session);
+@@ -30,8 +34,15 @@ async function validateSession(token) {
+     return null;
+   }
+   
+-  return { userId: session.userId, valid: true };
++  // Check expiration
++  if (session.expiresAt < Date.now()) {
++    await sessionStore.delete(token);
++    return null;
++  }
++  
++  return { userId: session.userId, valid: true, permissions: session.permissions };
+ }
+ 
+ async function refreshToken(token) {
++  // ISSUE: Race condition possible here with concurrent refreshes
+   const session = await sessionStore.get(token);
+   if (!session) {
+     return null;
+@@ -39,6 +50,11 @@ async function refreshToken(token) {
+   
+   const newToken = generateToken();
+   await sessionStore.delete(token);
++  
++  // BUG: No null check on user object returned from DB
++  const user = await db.users.findById(session.userId);
++  await sessionStore.save({ ...session, token: newToken });
++  
+   await sessionStore.save({ ...session, token: newToken });
+   
+   return newToken;

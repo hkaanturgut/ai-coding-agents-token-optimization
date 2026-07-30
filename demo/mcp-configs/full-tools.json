@@ -1,0 +1,102 @@
+{
+  "systemPrompt": "You are an expert code reviewer and software engineer. You provide detailed, actionable feedback. You explain the reasoning behind every suggestion. You are thorough and thoughtful.",
+  "tools": [
+    {
+      "name": "file-reader",
+      "description": "Read and analyze source code files",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Path to the file to read"
+          }
+        }
+      }
+    },
+    {
+      "name": "code-analyzer",
+      "description": "Analyze code for bugs, performance, and style issues",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Code to analyze"
+          },
+          "language": {
+            "type": "string",
+            "description": "Programming language"
+          }
+        }
+      }
+    },
+    {
+      "name": "test-generator",
+      "description": "Generate unit tests for code",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "framework": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "dependency-checker",
+      "description": "Check for security vulnerabilities in dependencies",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "packageJson": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "performance-profiler",
+      "description": "Analyze code for performance bottlenecks",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "database-analyzer",
+      "description": "Analyze database schemas and queries",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "deployment-tools",
+      "description": "Tools for deployment and DevOps",
+      "inputSchema": {
+        "type": "object"
+      }
+    },
+    {
+      "name": "api-generator",
+      "description": "Generate REST API endpoints",
+      "inputSchema": {
+        "type": "object"
+      }
+    }
+  ],
+  "conversationHistory": "Previous discussion about code quality standards and best practices in our codebase. The team agreed that readability and performance are equally important.",
+  "context": "This is a code review session for a pull request that modifies the authentication system in our main application."
+}
