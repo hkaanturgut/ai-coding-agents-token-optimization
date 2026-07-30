@@ -313,6 +313,11 @@ then pull in the full instructions only if it does.
 > exactly how they install in Copilot CLI / Claude Code. Details on authoring:
 > [VS Code custom skills docs](https://code.visualstudio.com/docs/copilot/customization/custom-instructions).
 
+> **Don't start from scratch — take a look at
+> [Awesome Copilot](https://awesome-copilot.github.com/):** a community gallery of
+> ready-made custom instructions, prompt files, chat modes, and collections you
+> can drop straight into `.github/`. Grab one, tweak it, ship it.
+
 ---
 
 # Act 2 — GitHub Spec Kit (build the right thing once)
