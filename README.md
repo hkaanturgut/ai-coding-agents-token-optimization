@@ -71,6 +71,36 @@ more tokens than its word count suggests.
 
 Rule of thumb: **1,000 tokens ≈ 750 words ≈ ~50 lines of code.**
 
+#### How an LLM tokenizer works
+
+<p align="center">
+  <img src="docs/assets/llm-tokenizer.jpeg" alt="LLM tokenizer: a sentence split into subword tokens, mapped to integer IDs, then to embedding vectors" width="560" />
+</p>
+
+The model never sees your text — it sees numbers. Three steps:
+
+1. **Split into tokens.** A tokenizer (e.g. BPE — byte-pair encoding) breaks text
+   into common sub-word chunks. Frequent words stay whole; rarer ones fragment.
+   Above, *"Today is a beautiful day outside."* becomes
+   `["To","day","is","a","beaut","iful","day","out","side","."]` — note
+   `beautiful` → `beaut` + `iful`, and the period is its own token.
+2. **Map to token IDs.** Each token is looked up in a fixed vocabulary and
+   replaced by an integer (`98, 1452, 43, …`). Same chunk → same ID every time.
+3. **Embed as vectors.** Each ID becomes a learned vector (the columns) that the
+   model actually computes on.
+
+Why it matters for cost:
+- **Billing counts tokens, not characters or words** — steps 1–2 are exactly what
+  you pay for, on input *and* output.
+- **Sub-word splitting is why code costs more.** Identifiers, punctuation,
+  whitespace, and JSON all fragment into many tokens, so a file is more tokens
+  than its word count suggests.
+- **Every turn re-tokenizes the whole conversation** — which is why trimming
+  context (Act 1) directly cuts the bill.
+
+> Try it: paste text into a live tokenizer (e.g. platform tokenizer tools) and
+> watch the token count jump on code and rare words.
+
 ### Token-based pricing — you pay per token, twice
 
 APIs bill **per million tokens (MTok)**, and **input and output are priced
