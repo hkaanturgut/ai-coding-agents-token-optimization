@@ -10,8 +10,8 @@
 A single, copy-paste demo that tells one story in three acts, each attacking a
 different source of wasted tokens:
 
-1. **Native first** — the slash commands and config files your agent already
-   ships.
+1. **Token optimization techniques** — the slash commands, context habits, and
+   config files your agent already ships (grounded in GitHub's official guide).
 2. **Spec Kit** — build the *right* thing once instead of re-prompting your way
    there (the biggest hidden token cost is rework).
 3. **Two tools** — **ponytail** shrinks the *code* the agent writes, **caveman**
@@ -90,7 +90,7 @@ Four ways tokens leak, and what plugs each:
 
 | Leak | What it is | Act |
 |------|-----------|-----|
-| **Context** | Stale conversation re-sent every turn | Act 1 — `/clear`, `/compact` |
+| **Context** | Stale conversation re-sent every turn | Act 1 — context, prompts, cache, model |
 | **Rework** | Building the wrong thing, then redoing it | Act 2 — Spec Kit |
 | **Code** | The agent over-building what you asked for | Act 3 — ponytail |
 | **Output** | Verbose replies on every turn | Act 3 — caveman |
@@ -115,91 +115,98 @@ tools make the last two leaks automatic.
 
 ---
 
-# Act 1 — Native optimization (no installs)
+# Act 1 — Token Optimization Techniques (no installs)
 
-The biggest waste is context you forgot you were carrying. Fix it with what your
-agent already ships. (Commands shown for Copilot; Claude Code uses the same
-`/clear` and `/compact`, plus `/context` and `/cost`.)
+Everything the agent *reads* and *does* costs tokens. These are the techniques
+that cut that cost with zero installs — grouped into **context & prompts** and
+**model, cache & workflow**. Commands are shown Copilot-first; Claude Code and
+others have close equivalents. Grounded in GitHub's
+[Optimize your AI usage](https://docs.github.com/en/copilot/tutorials/optimize-ai-usage) guide.
 
-### 1.1 — See the bill
+## A. Context & prompt management
 
-Every turn re-sends the whole conversation. A long thread pays for every past
-turn. In Copilot Chat, hover the **context-window indicator** below the input and
-watch it climb as the thread grows. (Claude Code: run `/context`.)
+**Treat context as a budget.** Open tabs, attached files, and the whole
+conversation are re-sent as input tokens *every turn*. Watch it with the
+context-window indicator (Copilot Chat) or `/context` (Copilot CLI / Claude Code).
 
-> **Say:** "We haven't touched the model. Most of what we're paying for is old
-> conversation."
-
-### 1.2 — Reclaim it with two commands
+**Reset or compact — don't let threads sprawl:**
 
 | Goal | Command |
 |------|---------|
-| New, unrelated task — drop all history | `/clear` (fresh chat) |
-| Same task, long thread — keep a summary | `/compact` (or **Summarize conversation**) |
+| New, unrelated task — drop history | `/clear` (Copilot CLI: `/new`) |
+| Keep the thread, shrink it | `/compact` — optionally `/compact focus on auth` |
+| Check current usage | `/context` |
 
-**Do it live:** type `/compact` in a long thread — the agent swaps the transcript
-for a summary and keeps going. Start the next task with `/clear`.
+> Highest-leverage habit in the talk: `/clear` between unrelated tasks. Free, and
+> nobody does it.
 
-> **Highest-leverage habit in this talk:** `/clear` between unrelated tasks.
-> Costs nothing, and nobody does it.
-
-### 1.3 — Point at data, don't paste it
-
-The classic waste is pasting a huge log into chat.
+**Progressive disclosure — point, don't paste.** Don't dump a codebase or a huge
+log. Give the agent a *map* (`.github/copilot-instructions.md` / `AGENTS.md`) and
+let it open only what it needs. Pre-filter big data locally and paste only the
+result:
 
 ```bash
 wc -l demo/sample-data/large-log.txt        # ~500,000 lines
-```
-
-Filter first, paste only the result:
-
-```bash
 grep -iE "error|fatal|exception" demo/sample-data/large-log.txt \
-  | sort | uniq -c | sort -rn | head
+  | sort | uniq -c | sort -rn | head        # → a few lines: Postgres timeout
 ```
+> Prompt with only the grep output: *"Top error lines below — most likely root
+> cause and smallest fix?"* Same answer, ~99% fewer tokens. Local `grep` is free.
 
-You get a handful of lines pointing at a Postgres connection timeout.
+**Be precise, not polite.** Drop pleasantries; give the agent three things —
+a clear task, the relevant context up front, and a **stopping condition**. Vague
+prompts cause exploration, retries, and scope drift (all tokens).
 
-**Prompt (paste only the grep output):**
-> Here are the top error lines from a production log:
-> ```
-> <paste the ~5 lines>
-> ```
-> Most likely root cause and the smallest fix?
+**Trim shell & tool outputs.** Pipe noisy commands through `grep`/`head`/`jq` so
+the agent ingests errors, not raw dumps.
 
-Same answer, ~99% fewer tokens. Your local `grep` was free.
+**Bring only the tools you need.** A full MCP server's toolset is re-sent every
+request — enable only the toolsets the task needs.
 
-### 1.4 — Write standing rules once (custom instructions)
+## B. Model, cache & workflow
 
-Stop retyping "use the stdlib, no comments, keep it small" every prompt. Put
-standing rules in a file the agent reads automatically every turn.
+**Match the model to the task.** Reasoning models for architecture/hard debugging;
+mid-tier to execute a clear plan; light models for refactor/format/docs. Prefer
+**auto model selection** (routes per prompt, protects cache, +10% cost discount on
+paid plans). Raise reasoning level only for hard tasks.
 
-- **Copilot, repo-wide:** `.github/copilot-instructions.md`. Generate a starter
-  with `/generateInstructions`, or copy
-  [demo/part1-native/copilot-instructions.example.md](demo/part1-native/copilot-instructions.example.md).
-- **Copilot, path-scoped / multiple:** `.github/instructions/*.instructions.md`
-  with an `applyTo` glob in the front matter. (This is exactly how the two tools
-  in Act 3 ship.)
-- **Other agents:** Claude Code → `CLAUDE.md`; Cursor → `.cursor/rules/`;
-  Windsurf → `.windsurf/rules/`; most others → `AGENTS.md`.
+**Preserve the cache.** Cached context bills at ~10% of fresh input. These
+*invalidate* it and re-bill the full context — avoid mid-session:
+- switching models,
+- changing reasoning level / enabled tools / MCP servers,
+- returning to a stale session (caches expire ~1–24h → start fresh or `/compact`).
 
-**Prove it:** with the example rules in place, ask a normal question — the agent
-already follows the rules without you repeating them.
+**Research → plan → implement.** Don't do everything in one sprawling session.
+Explore, then make a plan with a *strong* model (`/plan`), then implement with a
+*cheaper* one. This is exactly what Act 2 (Spec Kit) formalizes.
 
-### 1.5 — Turn repeated prompts into files (prompt files)
+**Add deterministic guardrails.** Tests, linters, and security scans give the
+agent pass/fail signals so it self-corrects instead of drifting — fewer retries,
+less token waste.
 
-For prompts you run often, save them as files and run them by name instead of
-pasting from a notes doc.
+**Cap and learn.** Set an AI-credit **session limit** to avoid runaway cost. Use
+`/chronicle tips` and `/chronicle cost-tips` (Copilot CLI) to mine your own
+history for savings, then encode recurring fixes into your instructions file.
 
-1. Copilot: copy
-   [demo/part1-native/optimize-logs.prompt.md](demo/part1-native/optimize-logs.prompt.md)
-   into `.github/prompts/`. (Claude Code: `.claude/commands/*.md`.)
-2. In Chat, run `/optimize-logs` (or Command Palette → **Chat: Run Prompt**). It
-   reruns 1.3 as a one-word command.
-3. Capture a good ad-hoc prompt into a file with `/savePrompt`.
+## C. Make the rules reusable
 
-> **Say:** "Every rule and prompt you write here is a paragraph you never
-> retype — and a wrong first draft you never pay to correct."
+**Custom instructions — write standing rules once.** Rules the agent reads every
+turn, so you stop repeating yourself (and stop paying for wrong first drafts).
+Keep them short, specific, and grounded in real behavior.
+
+- **Copilot, repo-wide:** `.github/copilot-instructions.md` (`/generateInstructions`
+  scaffolds one; example: [copilot-instructions.example.md](demo/part1-native/copilot-instructions.example.md)).
+- **Copilot, path-scoped:** `.github/instructions/*.instructions.md` with an
+  `applyTo` glob. (Exactly how the Act 3 tools ship.)
+- **Other agents:** Claude Code → `CLAUDE.md`; Cursor → `.cursor/rules/`; most
+  others → `AGENTS.md`.
+
+**Prompt files — save prompts you rerun.** Store them as files and run by name.
+
+1. Copy [optimize-logs.prompt.md](demo/part1-native/optimize-logs.prompt.md) into
+   `.github/prompts/` (Claude Code: `.claude/commands/*.md`).
+2. Run `/optimize-logs` in Chat — reruns the log triage as one word. Capture a
+   good ad-hoc prompt with `/savePrompt`.
 
 ---
 
