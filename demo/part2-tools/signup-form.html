@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!--
+  Ponytail demo target.
+  Ask Copilot: "Add a date-of-birth field to this form."
+  Without ponytail: it reaches for a datepicker library + wrapper + styles.
+  With ponytail:   <input type="date"> — the native platform feature.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sign up</title>
+  </head>
+  <body>
+    <form id="signup" action="/signup" method="post">
+      <label>Full name <input type="text" name="name" required /></label>
+      <label>Email <input type="email" name="email" required /></label>
+      <label>Password <input type="password" name="password" required /></label>
+      <!-- Add a date-of-birth field here -->
+      <button type="submit">Create account</button>
+    </form>
+  </body>
+</html>

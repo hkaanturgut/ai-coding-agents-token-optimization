@@ -17,21 +17,29 @@ Think of it as: **caveman = smaller mouth, ponytail = smaller hands.**
 Makes the agent drop filler and answer in tight, telegraphic prose while keeping
 every code block, command, and error string exact.
 
-### Install
-One command finds every agent on your machine and installs for each. Needs
-Node ≥ 18, takes ~30s, safe to re-run.
+### Install — GitHub Copilot (VS Code)
+In Copilot, caveman is an **instruction file**, not a plugin. This repo already
+ships it at
+[.github/instructions/caveman.instructions.md](../.github/instructions/caveman.instructions.md);
+Copilot loads it automatically. To add it to your own repo:
 
 ```bash
-# macOS / Linux / WSL / Git Bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash
+# Writes .github/copilot-instructions.md from the caveman rule body
+npx -y github:JuliusBrussee/caveman -- --only copilot --with-init
 
-# Windows PowerShell 5.1+
-irm https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.ps1 | iex
+# ...or copy the rule body straight in yourself:
+curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/src/rules/caveman-activate.md \
+  > .github/instructions/caveman.instructions.md   # add `applyTo: '**'` front matter
 ```
 
-On Claude Code, Codex, and Gemini it's on from message one — no command needed.
-Elsewhere, turn it on with `/caveman` or by saying "talk like caveman"; turn it
-off with "normal mode".
+Turn it off for a session by saying "normal mode"; back on with "talk like
+caveman".
+
+> **Other agents:** the one-line installer
+> (`curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash`)
+> auto-detects Claude Code, Codex, Gemini, Cursor, and 30+ others. On Claude
+> Code/Codex/Gemini caveman is on from message one and adds the hook-based
+> commands below.
 
 ### Levels
 Switch anytime with `/caveman <level>`; the level sticks for the session.
@@ -47,7 +55,7 @@ Switch anytime with `/caveman <level>`; the level sticks for the session.
 It keeps *your* language — write in Portuguese, it grunts in Portuguese. Only
 `wenyan` translates, on purpose (most meaning per token).
 
-### Commands
+### Commands (hook-capable agents — Claude Code / Codex / Gemini)
 | Command | What it does |
 |---------|--------------|
 | `/caveman [lite\|full\|ultra\|wenyan]` | Compress every reply; level sticks |
@@ -56,7 +64,10 @@ It keeps *your* language — write in Portuguese, it grunts in Portuguese. Only
 | `/caveman-stats [--share]` | Real session token usage + lifetime savings in USD |
 | `/caveman-compress <file>` | Rewrite a memory file (e.g. `CLAUDE.md`) into caveman-speak; cuts ~46% input tokens every future session |
 
-On Claude Code, the statusline shows lifetime tokens saved, e.g. `[CAVEMAN] ⛏ 12.4k`.
+> **In GitHub Copilot** these slash commands and the `[CAVEMAN] ⛏` statusline are
+> **not** available — they rely on Claude Code hooks. Copilot gets the core
+> compression via the instruction file; toggle with "normal mode" / "talk like
+> caveman".
 
 ### The honest caveat (say this out loud in the demo)
 caveman only shrinks **output** tokens and adds ~1–1.5K **input** tokens per
@@ -100,25 +111,31 @@ It makes the agent stop at the first rung of a YAGNI ladder that actually holds,
 security, and accessibility are never on the chopping block. In the benchmark it
 was the only arm that cut every metric *and* stayed 100% safe.
 
-### Install
+### Install — GitHub Copilot (VS Code)
+In Copilot, ponytail is an **instruction file** (its slash commands need a
+plugin-capable host; the always-on ruleset does not). This repo already ships it
+at
+[.github/instructions/ponytail.instructions.md](../.github/instructions/ponytail.instructions.md);
+Copilot loads it automatically. To add it to your own repo, copy that file into
+`.github/instructions/`, or pull the upstream rule body:
+
 ```bash
-# Claude Code — send as TWO separate prompts
-/plugin marketplace add DietrichGebert/ponytail
-/plugin install ponytail@ponytail
-
-# GitHub Copilot CLI
-copilot plugin marketplace add DietrichGebert/ponytail
-copilot plugin install ponytail@ponytail
-# then in-session, commands are namespaced: /ponytail:ponytail ultra
-
-# GitHub Copilot Chat (VS Code editor extension) — instruction-only mode
-# copy this repo's .github/copilot-instructions.md into your project
+curl -fsSL https://raw.githubusercontent.com/DietrichGebert/ponytail/main/.github/copilot-instructions.md \
+  > .github/instructions/ponytail.instructions.md   # add `applyTo: '**'` front matter
 ```
 
-Also ships for Codex, Cursor, Windsurf, Cline, Gemini CLI, and 20+ others — see
-the [ponytail install matrix](https://github.com/DietrichGebert/ponytail#install).
+> **Other agents:** Claude Code / Codex get the full plugin with slash commands:
+> ```
+> /plugin marketplace add DietrichGebert/ponytail
+> /plugin install ponytail@ponytail
+> ```
+> Also ships for Cursor, Windsurf, Cline, Gemini CLI, and 20+ others — see the
+> [ponytail install matrix](https://github.com/DietrichGebert/ponytail#install).
 
-### Levels & commands
+### Levels & commands (plugin-capable hosts — Claude Code / Codex)
+> In GitHub Copilot the ruleset is always-on via the instruction file; the slash
+> commands below are not available there.
+
 | Command | What it does |
 |---------|--------------|
 | `/ponytail [lite\|full\|ultra\|off]` | Set intensity; no arg reports current level |

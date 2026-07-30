@@ -1,82 +1,68 @@
-# Demo — Part 2: caveman + ponytail (hands-on)
+# Demo — Part 2: ponytail + caveman in GitHub Copilot
 
-Install both live, show a clean before/after for each. ~10 minutes.
+Both tools are already installed in this repo as instruction files:
 
----
+- [../../.github/instructions/ponytail.instructions.md](../../.github/instructions/ponytail.instructions.md)
+- [../../.github/instructions/caveman.instructions.md](../../.github/instructions/caveman.instructions.md)
 
-## Demo 2.1 — caveman (smaller mouth)
-
-**Install (once, ~30s, needs Node ≥ 18):**
-```bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash
-```
-
-**Before / after — ask the same question twice.**
-
-Normal:
-> "You should wrap the object in `useMemo`, since a new reference is created on
-> every render, which causes the child to re-render unnecessarily."
-
-Caveman (`/caveman full`):
-> "New ref each render → child re-renders. Wrap object in `useMemo`."
-
-Same fix, a third of the words, nothing technical lost. Push it further with
-`/caveman ultra`.
-
-**Show the receipt:**
-```
-/caveman-stats
-```
-Real session token count + lifetime savings.
-
-**Say the honest caveat:** caveman shrinks *output* only and adds ~1–1.5K input
-tokens/turn — the durable win is readability and speed, cost is a bonus.
+They use `applyTo: '**'`, so Copilot loads them automatically when this folder is
+your workspace. **Opening this repo is the install.** To use them elsewhere, copy
+the two files into that repo's `.github/instructions/`.
 
 ---
 
-## Demo 2.2 — ponytail (smaller hands)
+## Demo 2.1 — ponytail (smaller hands)
 
-**Install (Claude Code — two separate prompts):**
-```
-/plugin marketplace add DietrichGebert/ponytail
-/plugin install ponytail@ponytail
-```
+**Target:** [signup-form.html](signup-form.html) — a form missing a birth-date
+field.
 
-**Before / after — ask for a date picker.**
+**Prompt (Copilot Chat, Agent mode):**
+> Add a date-of-birth field to the signup form.
 
-Without ponytail, a typical agent installs a library, writes a wrapper
-component, and adds a stylesheet.
-
-With ponytail:
+**With ponytail on (default here):** Copilot climbs the YAGNI ladder to the
+native platform feature and writes one line:
 ```html
-<!-- ponytail: browser has one -->
-<input type="date">
+<input type="date" name="dob" required />
 ```
+No datepicker library, no wrapper component, no stylesheet — and it keeps
+`required`, because validation is never cut.
 
-The agent climbed the YAGNI ladder and stopped at "native platform feature."
+**Show the "before":** rename `ponytail.instructions.md` to `.off`, reload the
+window, and rerun the same prompt in a scratch file. Typical result: an installed
+datepicker dependency + wrapper. Rename it back when done.
 
-**Run it on a real diff:**
-```
-/ponytail-review
-```
-Hands back a delete-list of over-engineering in the current changes — without
-cutting validation, security, or accessibility.
-
-**Optionally** point at `../sample-data/database-schema.sql` and ask for a
-migration: ponytail writes the minimum that works instead of a migration
-framework.
+**Bonus prompt — audit a diff:**
+> Review the current changes for over-engineering. Delete-list only:
+> file:line → remove → why. Keep validation, security, accessibility.
 
 ---
 
-## Demo 2.3 — They stack
+## Demo 2.2 — caveman (smaller mouth)
 
-Turn both on and make one change:
+**Prompt (Copilot Chat):**
+> Explain how database connection pooling works.
 
-- **caveman** keeps the reply short (code stays byte-for-byte exact).
-- **ponytail** keeps the change small (prose untouched).
+**With caveman on (default here):** terse, telegraphic answer — same facts, ~a
+third of the words, code/commands/errors untouched.
 
-> caveman = what the agent says. ponytail = what the agent builds. No overlap —
-> run both.
+**Show the "before":** say `normal mode` and rerun — full verbose paragraph.
+Bring it back with `talk like caveman`.
+
+**Honest note to say out loud:** this instruction-file form shrinks *output*
+tokens only. The `/caveman-stats` counter and statusline are Claude Code hook
+features and won't appear in Copilot.
+
+---
+
+## Demo 2.3 — they stack
+
+Ask Copilot to implement one small feature *and* explain it:
+
+- **ponytail** keeps the code minimal.
+- **caveman** keeps the explanation short.
+
+Different halves, zero overlap. caveman = what Copilot says, ponytail = what
+Copilot builds.
 
 ---
 

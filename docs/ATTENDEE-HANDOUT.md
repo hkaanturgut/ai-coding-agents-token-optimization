@@ -28,32 +28,28 @@ CODE     = what the model builds in your repo -> ponytail
 
 ## Part 2 — Two tools that stack
 
-### caveman — smaller mouth
-```bash
-curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash
-```
+### caveman — smaller mouth (what the agent SAYS)
+GitHub Copilot: copy `caveman.instructions.md` into `.github/instructions/`.
 - ~65% fewer **output** tokens; code/commands/errors stay exact.
-- `/caveman ultra` to compress hard, `/caveman-stats` to see savings.
-- Honest: only output tokens, adds ~1–1.5K input/turn — real win is speed + readability.
+- Toggle with "normal mode" / "talk like caveman".
+- Honest: output tokens only — real win is speed + readability. (`/caveman-stats`
+  + statusline are Claude Code only.)
 
-### ponytail — smaller hands
-```
-/plugin marketplace add DietrichGebert/ponytail
-/plugin install ponytail@ponytail
-```
+### ponytail — smaller hands (what the agent BUILDS)
+GitHub Copilot: copy `ponytail.instructions.md` into `.github/instructions/`.
 - ~54% less **code**; never cuts security, validation, or accessibility.
 - YAGNI ladder: skip → reuse → stdlib → native → dep → one line → minimum.
-- `/ponytail-review` for a delete-list on your current diff.
+- Killer demo: "add a date picker" → `<input type="date">` instead of a library.
 
 ---
 
 ## Do this week
 
 1. **Mon:** `/clear` between every unrelated task. Notice the difference.
-2. **Tue:** Add a `copilot-instructions.md` / `CLAUDE.md` with your top 5 rules.
-3. **Wed:** Turn one repeated paste into a `.prompt.md` / `.claude/commands` file.
-4. **Thu:** Install caveman, run a session, check `/caveman-stats`.
-5. **Fri:** Install ponytail, run `/ponytail-review` on a real PR diff.
+2. **Tue:** Add a `.github/copilot-instructions.md` with your top 5 rules.
+3. **Wed:** Turn one repeated paste into a `.github/prompts/*.prompt.md` file.
+4. **Thu:** Copy `ponytail.instructions.md` in; run the date-picker prompt.
+5. **Fri:** Copy `caveman.instructions.md` in; feel the shorter answers.
 
 ---
 

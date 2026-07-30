@@ -44,6 +44,3 @@ free-text prompt.
 |------|----------|
 | **caveman** | `/caveman [lite\|full\|ultra\|wenyan]`, `/caveman-commit`, `/caveman-review`, `/caveman-stats`, `/caveman-compress <file>` |
 | **ponytail** | `/ponytail [lite\|full\|ultra\|off]`, `/ponytail-review`, `/ponytail-audit`, `/ponytail-debt`, `/ponytail-gain`, `/ponytail-help` |
-
-> Copilot CLI namespaces plugin commands by plugin name, e.g.
-> `/ponytail:ponytail ultra`.

@@ -5,8 +5,7 @@
   "private": true,
   "scripts": {
     "part1": "echo 'Open docs/PART-1-NATIVE.md and demo/part1-native/README.md'",
-    "part2": "echo 'Open docs/PART-2-CAVEMAN-PONYTAIL.md and demo/part2-tools/README.md'",
-    "caveman:install": "curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash"
+    "part2": "echo 'Tools ship in .github/instructions/ — open demo/part2-tools/README.md'"
   },
   "keywords": [
     "tokens",
