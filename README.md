@@ -22,6 +22,20 @@ different source of wasted tokens:
 
 ---
 
+## About me
+
+<p align="center">
+  <img src="docs/assets/about-me.png" alt="About Kaan Turgut — Cloud Solution Architect, Microsoft AI Foundry MVP, Cloud/DevOps & AI Engineer, community speaker" width="760" />
+</p>
+
+**Kaan Turgut** — Cloud Solution Architect · Microsoft AI Foundry MVP · Cloud,
+DevOps & AI Engineer · community speaker & contributor.
+Find me: [LinkedIn](https://www.linkedin.com/in/hkaanturgut) ·
+[GitHub](https://github.com/hkaanturgut) ·
+[YouTube](https://www.youtube.com/@hkaanturgut) · X [@hkaanturgut](https://x.com/hkaanturgut)
+
+---
+
 ## 📲 Scan to start — 60-second audience survey
 
 Before we dive in, scan this and tell us how you use AI agents. It shapes the
