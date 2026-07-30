@@ -22,6 +22,56 @@ different source of wasted tokens:
 
 ---
 
+## Start here: why tokens are the whole game
+
+Before any optimization, understand what you're actually paying for.
+
+### Tokens — the unit of everything
+
+An LLM doesn't read characters or words; it reads **tokens**. A token is a chunk
+of text — roughly **¾ of a word**, or about **4 characters** in English. "Stop
+burning tokens" is ~4 tokens. Code and punctuation tokenize denser, so a file is
+more tokens than its word count suggests.
+
+Rule of thumb: **1,000 tokens ≈ 750 words ≈ ~50 lines of code.**
+
+### Token-based pricing — you pay per token, twice
+
+APIs bill **per million tokens (MTok)**, and **input and output are priced
+separately** — output is usually **3–5× more expensive** than input, because the
+model generates it one token at a time. Illustrative (check current vendor
+pricing — these move):
+
+| Model tier | Input / MTok | Output / MTok |
+|------------|-------------|---------------|
+| Small/fast | ~$0.25–1 | ~$1–5 |
+| Frontier | ~$3–15 | ~$15–75 |
+
+Two levers fall straight out of this table:
+- **Input tokens** = everything you *send* (system prompt, tools, history, files).
+  → attacked by Act 1 (context) and Act 2 (less rework).
+- **Output tokens** = everything the model *writes back* (explanations + code).
+  → attacked by Act 3 (caveman trims prose, ponytail trims code).
+
+### The context window — the hard ceiling
+
+The **context window** is the maximum number of tokens a model can consider at
+once — **input + output combined**. Typical sizes today: ~128K, 200K, up to 1M+
+tokens.
+
+Two things people miss:
+1. **Every turn re-sends the whole conversation.** The model is stateless, so on
+   turn 20 you pay input tokens for turns 1–19 *again*. A long chat silently
+   re-bills its entire history on every message.
+2. **Fill the window and quality drops.** As you approach the limit the agent
+   truncates or "forgets" earlier context, and models get less reliable in a very
+   full window ("lost in the middle"). Cost goes up *and* accuracy goes down.
+
+> **Say:** "You're not billed once for a conversation — you're billed for the
+> whole conversation on every single turn. That's why context hygiene is money."
+
+---
+
 ## The story in one picture
 
 Four ways tokens leak, and what plugs each:
