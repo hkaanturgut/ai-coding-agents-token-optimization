@@ -6,6 +6,7 @@
   "scripts": {
     "setup": "bash scripts/setup-demo.sh",
     "baseline": "bash scripts/run-baseline.sh",
+    "demo": "bash scripts/run-demo.sh",
     "inspect": "node tools/token-inspector.js",
     "compress": "node tools/caveman-formatter.js",
     "budget": "node tools/agent-budget-calculator.js"

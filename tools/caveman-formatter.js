@@ -64,22 +64,22 @@ function compressUltra(text) {
   let compressed = compressFull(text);
 
   // Use abbreviations
-  const abbreviations = {
-    /\bcannot\b/gi: "can't",
-    /\brequires?\b/gi: 'needs',
-    /\bimplementation\b/gi: 'impl',
-    /\bconfiguration\b/gi: 'config',
-    /\bdatabase\b/gi: 'db',
-    /\binformation\b/gi: 'info',
-    /\bfunction\b/gi: 'fn',
-    /\bproblem\b/gi: 'issue',
-    /\bdeprecated\b/gi: 'deprecated',
-    /\binstead\b/gi: 'use',
-    /\bsolution\b/gi: 'fix',
-  };
+  const abbreviations = [
+    [/\bcannot\b/gi, "can't"],
+    [/\brequires?\b/gi, 'needs'],
+    [/\bimplementation\b/gi, 'impl'],
+    [/\bconfiguration\b/gi, 'config'],
+    [/\bdatabase\b/gi, 'db'],
+    [/\binformation\b/gi, 'info'],
+    [/\bfunction\b/gi, 'fn'],
+    [/\bproblem\b/gi, 'issue'],
+    [/\bdeprecated\b/gi, 'deprecated'],
+    [/\binstead\b/gi, 'use'],
+    [/\bsolution\b/gi, 'fix'],
+  ];
 
-  Object.entries(abbreviations).forEach(([pattern, replacement]) => {
-    compressed = compressed.replace(new RegExp(pattern, 'g'), replacement);
+  abbreviations.forEach(([pattern, replacement]) => {
+    compressed = compressed.replace(pattern, replacement);
   });
 
   // Remove punctuation where possible

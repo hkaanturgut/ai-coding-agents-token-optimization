@@ -25,10 +25,6 @@ A hands-on walkthrough for diagnosing and fixing token waste in AI coding agents
 .
 ├── README.md                          # This file - full demo walkthrough
 ├── demo/
-│   ├── 01-token-baseline.py          # Script: Inspect token overhead in your setup
-│   ├── 02-tool-analysis.py           # Script: Analyze MCP tool definitions
-│   ├── 03-caveman-demo.py            # Script: Ultra-compressed communication demo
-│   ├── 04-multi-agent-pipeline.py    # Script: Multi-agent cost simulation
 │   ├── scenarios/
 │   │   ├── bug-hunt.md               # Live demo scenario 1: Find bug in logs
 │   │   ├── code-review.md            # Live demo scenario 2: Review code changes
@@ -53,7 +49,8 @@ A hands-on walkthrough for diagnosing and fixing token waste in AI coding agents
 │   └── ATTENDEE-HANDOUT.md          # One-pager for attendees
 └── scripts/
     ├── setup-demo.sh                 # Prepare demo environment
-    └── run-baseline.sh               # Quick baseline measurement
+    ├── run-baseline.sh               # Quick baseline measurement
+    └── run-demo.sh                   # One-command end-to-end run
 ```
 
 ---
@@ -82,7 +79,7 @@ cd ai-coding-agents-token-optimization
 npm install
 pip install -r requirements.txt
 
-# Generate sample data
+# Generate sample data + verify tools
 bash scripts/setup-demo.sh
 ```
 
@@ -90,6 +87,18 @@ bash scripts/setup-demo.sh
 - Creates sample MCP configurations
 - Generates a 10MB log file for the "bug hunt" scenario
 - Sets up token inspection baseline
+
+### 2️⃣ Run End-to-End Demo (single command)
+```bash
+npm run demo
+```
+
+### 3️⃣ Open Scenarios in Copilot/Claude Code
+```bash
+code demo/scenarios/bug-hunt.md
+code demo/scenarios/code-review.md
+code demo/scenarios/refactoring.md
+```
 
 ---
 
@@ -169,7 +178,7 @@ SAVINGS:           54,660 tokens (85% reduction!)
 **Bad Approach:**
 ```javascript
 // 🚫 DON'T DO THIS - costs 80K+ tokens
-const fullLog = fs.readFileSync('sample-data/large-log.txt', 'utf8');
+const fullLog = fs.readFileSync('demo/sample-data/large-log.txt', 'utf8');
 const prompt = `Here's a log file:\n${fullLog}\n\nFind the error and explain it.`;
 // This alone = 80K tokens before the AI even thinks
 ```
@@ -180,7 +189,7 @@ const prompt = `Here's a log file:\n${fullLog}\n\nFind the error and explain it.
 ```bash
 # ✅ DO THIS - costs 2K tokens
 # 1. Execute analysis locally
-grep -i "error\|exception\|fatal" sample-data/large-log.txt | head -50 > /tmp/errors.txt
+grep -i "error\|exception\|fatal" demo/sample-data/large-log.txt | head -50 > /tmp/errors.txt
 
 # 2. Share only the result
 cat /tmp/errors.txt  # ~2KB of relevant data
@@ -204,7 +213,7 @@ open demo/scenarios/bug-hunt.md
 #### Step 3.4: Caveman Mode Ultra-Compression
 ```bash
 # Compare: Normal output vs. Caveman-compressed
-python3 demo/03-caveman-demo.py
+node tools/caveman-formatter.js --input "Long technical response..." --mode full
 ```
 
 **Shows:**
@@ -225,7 +234,7 @@ Caveman Response:   620 tokens  (75% reduction)
 
 #### Step 4.1: Compare Single vs. Multi-Agent
 ```bash
-python3 demo/04-multi-agent-pipeline.py
+node tools/agent-budget-calculator.js --scenario code-review --budget 100K
 ```
 
 **Expected Output:**
@@ -578,8 +587,8 @@ bash scripts/setup-demo.sh
 # 3. Run each segment in order
 bash scripts/run-baseline.sh                    # Segment 1
 node tools/token-inspector.js --config demo/mcp-configs/selective-tools.json  # Segment 2
-python3 demo/03-caveman-demo.py                # Segment 3
-python3 demo/04-multi-agent-pipeline.py        # Segment 4
+node tools/caveman-formatter.js --input "Long technical response..." --mode full  # Segment 3
+node tools/agent-budget-calculator.js --scenario code-review --budget 100K        # Segment 4
 
 # 4. Open scenarios in Copilot
 code demo/scenarios/bug-hunt.md
@@ -619,7 +628,7 @@ A: Yes—scripts work standalone. Copilot is used only to show real-time token c
 A: See `docs/MCP-OPTIMIZATION.md` for platform-specific adaptations. The framework is universal; implementation varies slightly.
 
 **Q: What if scripts fail during demo?**  
-A: Use pre-recorded screenshots (included in `demo/screenshots/`). Demo still delivers value.
+A: Run `npm run demo` first; if a live step fails, continue using `demo/scenarios/*.md` walkthroughs.
 
 **Q: How much does this actually cost to implement?**  
 A: $0—all tools are open-source. Implementation time: 2–4 hours for initial setup.
