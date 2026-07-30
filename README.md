@@ -22,6 +22,18 @@ different source of wasted tokens:
 
 ---
 
+## 📲 Scan to start — 60-second audience survey
+
+Before we dive in, scan this and tell us how you use AI agents. It shapes the
+room and the demo.
+
+<p align="center">
+  <img src="docs/assets/audience-survey-qr.png" alt="QR code for the audience survey" width="240" />
+</p>
+
+---
+
+
 ## Start here: why tokens are the whole game
 
 Before any optimization, understand what you're actually paying for.
