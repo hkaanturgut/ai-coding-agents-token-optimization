@@ -1,24 +1,21 @@
 {
-  "name": "Stop Burning Tokens: AI Agent Cost Optimization",
-  "version": "1.0.0",
-  "description": "Framework and tools for optimizing token usage in AI coding agents",
-  "main": "tools/token-inspector.js",
+  "name": "stop-burning-tokens",
+  "version": "2.0.0",
+  "description": "DevOps Toronto session: native token optimization in Copilot & Claude Code, plus the caveman and ponytail tools",
+  "private": true,
   "scripts": {
-    "setup": "bash scripts/setup-demo.sh",
-    "baseline": "bash scripts/run-baseline.sh",
-    "demo": "bash scripts/run-demo.sh",
-    "inspect": "node tools/token-inspector.js",
-    "compress": "node tools/caveman-formatter.js",
-    "budget": "node tools/agent-budget-calculator.js"
+    "part1": "echo 'Open docs/PART-1-NATIVE.md and demo/part1-native/README.md'",
+    "part2": "echo 'Open docs/PART-2-CAVEMAN-PONYTAIL.md and demo/part2-tools/README.md'",
+    "caveman:install": "curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/main/install.sh | bash"
   },
   "keywords": [
     "tokens",
     "optimization",
-    "ai-agents",
-    "copilot",
-    "claude",
-    "cost-reduction",
-    "mcp"
+    "github-copilot",
+    "claude-code",
+    "caveman",
+    "ponytail",
+    "cost-reduction"
   ],
   "author": "DevOps Toronto Community",
   "license": "MIT",
