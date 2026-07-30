@@ -98,6 +98,31 @@ Why it matters for cost:
 - **Every turn re-tokenizes the whole conversation** — which is why trimming
   context (Act 1) directly cuts the bill.
 
+#### The integer ID is *not* the token count
+
+A common mix-up: the integer is **which** token, the count is **how many**.
+Neither is arithmetic — both are lookups.
+
+- **The vocabulary is a frozen dictionary** (~50K–200K entries) built once via BPE
+  training: start from raw bytes/characters, repeatedly merge the most *frequent*
+  adjacent pair into a new entry. Common words survive whole (`day`); rare ones
+  stay split (`beautiful` → `beaut`+`iful`).
+- **A token ID is just the row number** in that dictionary — `day → 1452` means
+  "row 1452", not "1452 of something". Same chunk → same ID, always.
+- **The token count is simply how many chunks your text splits into** — literally
+  `len(ids)`. The integer *values* are never summed.
+
+```
+"Today is a beautiful day outside."
+  → ["To","day","is","a","beaut","iful","day","out","side","."]   (split)
+  → [98, 1452, 43, 15, 2932, 1709, 1452, 3112, 3823, 74]          (lookup IDs)
+  → token count = length of that list = 10
+```
+
+So you can't predict the count from word count: a common word is 1 token, a long
+identifier can be 5+, and spaces/newlines/punctuation are their own tokens — which
+is exactly why code costs more than prose.
+
 > Try it: paste text into a live tokenizer (e.g. platform tokenizer tools) and
 > watch the token count jump on code and rare words.
 
