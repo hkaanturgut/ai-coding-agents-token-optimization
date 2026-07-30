@@ -22,6 +22,16 @@ different source of wasted tokens:
 
 ---
 
+## ⭐ Scan for this repo
+
+Grab the runbook, demos, and instruction files on your phone or laptop.
+
+<p align="center">
+  <img src="docs/assets/repo-qr.png" alt="QR code linking to this GitHub repository" width="200" />
+</p>
+
+---
+
 ## About me
 
 <p align="center">
