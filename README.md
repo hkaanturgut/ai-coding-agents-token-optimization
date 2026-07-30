@@ -291,6 +291,28 @@ Keep them short, specific, and grounded in real behavior.
 2. Run `/optimize-logs` in Chat — reruns the log triage as one word. Capture a
    good ad-hoc prompt with `/savePrompt`.
 
+**Skills — deep capability, loaded only when needed.** A **skill** is a folder
+with a `SKILL.md` (a name + description in front matter, then instructions, plus
+optional scripts/files). It packages a reusable workflow — "review a PR", "write
+a migration", "talk terse" — so the agent triggers it *by intent* instead of you
+re-explaining it every session.
+
+Why skills are a **token** technique — they're progressive disclosure:
+
+| Mechanism | Loads into context | Cost |
+|-----------|--------------------|------|
+| Custom instructions | **every turn** | always-on tax → keep short |
+| Prompt files | when you run them | on demand |
+| **Skills** | only the ~1-line **description** always; the **full body loads when triggered** | cheap until used → can be deep |
+
+So a skill gives you a big, detailed playbook without paying for it on every
+message. Copilot/Claude read the description to decide *whether* the task matches,
+then pull in the full instructions only if it does.
+
+> **This closes the loop:** ponytail and caveman in Act 3 **are skills** — that's
+> exactly how they install in Copilot CLI / Claude Code. Details on authoring:
+> [VS Code custom skills docs](https://code.visualstudio.com/docs/copilot/customization/custom-instructions).
+
 ---
 
 # Act 2 — GitHub Spec Kit (build the right thing once)
